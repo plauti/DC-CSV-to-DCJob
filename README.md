@@ -4,6 +4,7 @@ A java command line application to convert csv files into a working DC Job
 ## Config
 Change the values in the application properties located in the resource folder.
 
+```
 username << The Salesforce username
 password << The Salesforce password
 token << The Salesforce API Token if needed
@@ -11,6 +12,7 @@ endpoint << The Salesforce instance url.
 filename << The CSV File with the actial duplicate data
 sourceobject << The object type of the master records. This is in Key form. So 003 for Contact, 001 for Account, 00Q Lead. 
 matchobject << The object type of the ToMerge records. This is in Key form. So 003 for Contact, 001 for Account, 00Q Lead.
+```
 
 ## Duplicate File
 
