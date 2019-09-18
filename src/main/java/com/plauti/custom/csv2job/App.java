@@ -53,6 +53,9 @@ public class App implements CommandLineRunner {
     @Value("${matchobject}")
     private String matchObject;
 
+    @Value("${masterformerge}")
+    private Boolean setMasterForMerge;
+
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -79,11 +82,12 @@ public class App implements CommandLineRunner {
 
 
         Map<String, Group> groupMap = new HashMap<String, Group>();
+        Map<Integer, String> masterGroupMap = new HashMap<Integer, String>();
         String dcJobId = "A";
 
         System.out.println(resourceLoader.getResource("classpath:" + fileName).getFile());
 
-        CSVReader reader = new CSVReader(new FileReader(resourceLoader.getResource("classpath:" + fileName).getFile()), ',');
+        CSVReader reader = new CSVReader(new FileReader(resourceLoader.getResource("classpath:" + fileName).getFile()), ',','\'',1);
         String [] nextLine;
 
 
@@ -99,6 +103,7 @@ public class App implements CommandLineRunner {
 
             if (!groupMap.containsKey(sourceId)) {
                 groupMap.put(sourceId, new Group(sourceId));
+                masterGroupMap.put(groupMap.get(sourceId).getGroupNumber(), sourceId);
             }
             groupMap.get(sourceId).getMatchedRecords().add(matchId);
 
@@ -150,8 +155,11 @@ public class App implements CommandLineRunner {
             sfGroup.setType(sfNamepace + "dcGroup__c");
             sfGroup.setField(sfNamepace + "dcJob__c", dcJobId);
             sfGroup.setField(sfNamepace + "group__c", g.getGroupNumber());
-            sfGroup.setField(sfNamepace + "MasterRecord__c", g.getMasterId());
-
+            
+            if (setMasterForMerge) {
+                sfGroup.setField(sfNamepace + "MasterRecord__c", g.getMasterId());
+            }
+            
             groupList.add(sfGroup);
 
             if (g.getMatchedRecords().size() > groupCount) {
@@ -173,7 +181,8 @@ public class App implements CommandLineRunner {
             int a = 0;
             for (SObject sfGroupData : batch) {
                 if (saveResults[a].isSuccess()) {
-                    String masterId = (String) sfGroupData.getField(sfNamepace + "MasterRecord__c");
+                    Integer groupNumber = (Integer) sfGroupData.getField(sfNamepace + "group__c");
+                    String masterId = masterGroupMap.get(groupNumber);
                     groupMap.get(masterId).setGroupId(saveResults[a].getId());
                 }
                 a++;

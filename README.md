@@ -12,6 +12,7 @@ endpoint << The Salesforce instance url.
 filename << The CSV File with the actial duplicate data
 sourceobject << The object type of the master records. This is in Key form. So 003 for Contact, 001 for Account, 00Q Lead. 
 matchobject << The object type of the ToMerge records. This is in Key form. So 003 for Contact, 001 for Account, 00Q Lead.
+masterformerge << Sets the master record to be the master in the merge, no values are taken from the ToMerge records. Only the related records are reparented. If value is false, DC merge rules are applied.
 ```
 
 ## Duplicate File
